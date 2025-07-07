@@ -11,7 +11,7 @@ import {
 
 import ModalConfirmacao from "../../components/Confirmacao";
 
-const TaskList = ({ tasklist, setTasklist, carregarTarefas }) => {
+const TaskList = async ({ tasklist, setTasklist, carregarTarefas }) => {
   const [modalAberto, setModalAberto] = useState(false);
   const [tarefaSelecionada, setTarefaSelecionada] = useState(null);
   const [carregando, setCarregando] = useState(false);
@@ -125,25 +125,6 @@ const TaskList = ({ tasklist, setTasklist, carregarTarefas }) => {
       {/* Modal de edição com confirmação */}
       <ModalConfirmacao
         aberto={modalConfirmarEdicao}
-        // onConfirmar={async () => {
-        //   if (!tarefaParaEditar || !tarefaParaEditar.tarefa) return;
-
-        //   try {
-        //     const sucesso = await updateTask(tarefaParaEditar);
-        //     if (sucesso) {
-        //       await carregarTarefas();
-        //       notificar("sucesso", "Tarefa atualizada com sucesso!");
-        //     }
-        //   } catch (error) {
-        //     notificar("erro", "Erro ao atualizar tarefa.");
-        //   }
-
-        //   setModoEdicaoId(null);
-        //   setTextoEditado("");
-        //   setTarefaParaEditar(null);
-        //   setModalConfirmarEdicao(false);
-        // }}
-
         onConfirmar={async () => {
           if (!tarefaParaEditar || !tarefaParaEditar.tarefa) return;
 
