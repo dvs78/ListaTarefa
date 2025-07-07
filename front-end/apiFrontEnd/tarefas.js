@@ -5,6 +5,7 @@ const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 // Buscar todas as tarefas
 export async function getAllTask() {
+  console.log("BASE_URL", BASE_URL);
   try {
     const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
     const { usuarioId } = usuario;

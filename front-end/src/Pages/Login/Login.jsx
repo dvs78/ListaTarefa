@@ -16,7 +16,7 @@ const Login = ({ setUsuarioLogado }) => {
         nome: encontrado.nome,
         email: encontrado.email,
       };
-      await setUsuarioLogado(user);
+      setUsuarioLogado(user);
       localStorage.setItem("usuarioLogado", JSON.stringify(user));
 
       navigate("/home");
