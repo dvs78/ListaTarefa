@@ -1,114 +1,13 @@
 
 
-13 ALTERAR ENDPOINT
-É necessário para não confundir com aquivos.js que terão o mesmo nome do endpoint
-Ex:
-
-const BASE_URL = "http://localhost:3000/api/carrinho";
-
-app.use("/api/carrinho", rotasCarrinho);
-app.use("/api/clientes", rotasClientes);
-app.use("/api/mudas", rotasMudas);
-app.use("/api/pedidos", rotasPedidos);
-app.use("/api/entregas", rotasEntregas);
 
 
-app.use(express.static(path.join(__dirname, "../../front-end/dist")));
-
-app.get("*any", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../front-end/dist/index.html"));
-});
-
-****Alterar no packge.json do back-end, retirar o nodemon, não é aceito na produção
-
- "scripts": {
-    "start": "node ./apiBack/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-
-14 PASSO - CÓDIGO PARA MANDAR PAR INDEX.HTML
-Ir para pasta back-end, digite no terminal
-npm i path
-
-Na pasta back-end criar o arquivo test.js
-import path, { dirname } from "path";
-
-const __dirname = path.resolve();
-console.log(__dirname);
-
-E rodar no back-end
-node ./test.js
-
-Vai dá a pasta que está executando: C:\Users\Daniel\Documents\Software\VIVEIRO_Limeira\back-end>
-
-Depois colocar o arquivo test.js dentro de api e rodar: node .\api\test.js
-Vai dá a pasta que está executando: C:\Users\Daniel\Documents\Software\VIVEIRO_Limeira\back-end>
-
-Pode recortar o conteúdo do arquivo test.js e colar no arquivo server.js
-// API significa Application Programing interface
-// POST, GET, PUT, DELETE
-// CRUD - CREATE, READ, UPDATE e DELETE
-// Endpoint
-// Middleware, para resolver o problema do front e back que estão em portas diferentes, import cors from "cors";
-
-import express from "express";
-import cors from "cors";
-import rotasClientes from "../crud/rotas/rotasClientes.js";
-import path, { dirname } from "path";
-
-const __dirname = path.resolve();
-
-const app = express();
-const PORT = 3000;
-
-app.use(express.json());
-app.use(cors());
-
-// app.get("/", async (request, response) => {
-//   response.send("Por enquanto só estou com construindo endpoint '/clientes'");
-// });
-
-// app.get("/clientes", async (request, response) => {
-//   response.send("Quero entregar meu json no endpoint '/clientes'");
-// });
-
-// app.get("/clientes", async (request, response) => {
-//   response.send(clientesArray);
-// });
-
-// const clientes = (await pool.query("SELECT * FROM clientes")).rows;
-
-// app.get("/clientes", async (request, response) => {
-//   response.send(clientes);
-// });
-app.use("/api/clientes", rotasClientes);
-
-app.use(express.static(path.join(__dirname, "../../front-end/dist")));
-
-app.get("*any", (req, res) => {
-  res.sendFile(path.join(__dirname, "../../front-end/dist/index.html"));
-});
-
-app.listen(PORT, () => {
-  console.log(`Servidor está escutando na porta ${PORT}`);
-});
 
 
-Ir para pasta global
-Agora rodar npm run build, precisa estar na pasta mãe
-Agora rodar npm run start, precisa estar na pasta mãe
-
-Rodar git add . , precisa estar na pasta mãe
-Rodar git commit -m "" . , precisa estar na pasta mãe
-Rodar git push . , precisa estar na pasta mãe
 
 
-15 PASSO - DEPLOY DO PROJETO NO RENDER
-Clique em deploy web service
-Em Build Command: npm run build
-Em Start Command: npm run start
-Selecionar free
-Clicar em deploy web service
+
+
 
 
 

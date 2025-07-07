@@ -298,6 +298,11 @@ app.listen(PORT, () => {
 });
 
 
+ALTERAR ENDPOINT
+É necessário para não confundir com aquivos.js que terão o mesmo nome do endpoint
+Ex:
+app.use("/api/carrinho", rotasTarefas);
+
 --------------------------------------------------------------------------------------------
 10 PASSO - CRIAR O BANCO DE DADOS NO pgadmin
 
@@ -639,64 +644,348 @@ export async function getAllTask() {
 
 --------------------------------------------------------------------------------------------
 20 PASSO - NOTIFICÇÕES PARA Ok ou CANCELAR
-Instale o SweetAlert2 no projeto frontend:
-npm install sweetalert2
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 
-Atualize sua função removeTask em TaskList.jsx
-import Swal from "sweetalert2";
-import { deleteByIdTask } from "../../../apiFrontEnd/tarefas";
+const ModalConfirmacao = ({
+  aberto,
+  onConfirmar,
+  onCancelar,
+  children,
+  carregando = false,
+  titulo = "Confirmar ação", // valor padrão
+}) => {
+  return (
+    <AnimatePresence>
+      {aberto && (
+        <motion.div
+          className="modal__fundo"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
+        >
+          <motion.div
+            className="modal__caixa"
+            initial={{ y: "-40px", opacity: 0, scale: 0.95 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: "-40px", opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+          >
+            <h2 style={{ color: "#333" }}>
+              <FontAwesomeIcon
+                icon={faExclamationTriangle}
+                style={{ color: "#e74c3c", marginRight: "8px" }}
+              />
+              {titulo}
+            </h2>
+
+            <div className="modal__mensagem">{children}</div>
+            <div className="modal__botoes">
+              <button
+                className="botao confirmar"
+                onClick={onConfirmar}
+                disabled={carregando}
+              >
+                {carregando ? "Salvando..." : "Confirmar"}
+              </button>
+              <button
+                className="botao cancelar"
+                onClick={onCancelar}
+                disabled={carregando}
+              >
+                Cancelar
+              </button>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+};
+
+export default ModalConfirmacao;
+
+ARQUIVO TaskList
+import React, { useState } from "react";
+import { deleteByIdTask, updateTask } from "../../../apiFrontEnd/tarefas";
 import { notificar } from "../../components/Toast";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faTrash,
+  faPencil,
+  faSave,
+  faTimes,
+} from "@fortawesome/free-solid-svg-icons";
+
+import ModalConfirmacao from "../../components/Confirmacao";
 
 const TaskList = ({ tasklist, setTasklist, carregarTarefas }) => {
-  const removeTask = async (task) => {
-    const result = await Swal.fire({
-      title: "Tem certeza?",
-      text: `Deseja excluir a tarefa: "${task.tarefa}"?`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Sim, excluir",
-      cancelButtonText: "Cancelar",
-    });
+  const [modalAberto, setModalAberto] = useState(false);
+  const [tarefaSelecionada, setTarefaSelecionada] = useState(null);
+  const [carregando, setCarregando] = useState(false);
+  const [modoEdicaoId, setModoEdicaoId] = useState(null);
+  const [textoEditado, setTextoEditado] = useState("");
 
-    if (!result.isConfirmed) return;
+  const [modalConfirmarEdicao, setModalConfirmarEdicao] = useState(false);
+  const [tarefaParaEditar, setTarefaParaEditar] = useState(null);
 
-    const success = await deleteByIdTask(task);
-    if (success) {
+  const pedirConfirmacao = (task) => {
+    setTarefaSelecionada(task);
+    setModalAberto(true);
+  };
+
+  const confirmarRemocao = async () => {
+    if (!tarefaSelecionada) return;
+
+    setCarregando(true);
+    const sucesso = await deleteByIdTask(tarefaSelecionada);
+    setCarregando(false);
+    setModalAberto(false);
+
+    if (sucesso) {
       await carregarTarefas();
-      notificar("erro", "Tarefa excluída com sucesso!");
+      notificar("sucesso", "Tarefa excluída com sucesso!");
     } else {
-      notificar("erro", "Erro ao excluir tarefa.");
+      notificar("erro", "Tarefa não encontrada");
     }
+
+    setTarefaSelecionada(null);
+  };
+
+  const iniciarEdicao = (task) => {
+    setModoEdicaoId(task.id);
+    setTextoEditado(task.tarefa);
+  };
+
+  const cancelarEdicao = () => {
+    setModoEdicaoId(null);
+    setTextoEditado("");
   };
 
   return (
     <div className="task__list">
-      {tasklist.map((task, i) => (
+      {tasklist.map((task) => (
         <div className="task__list-item" key={`task-${task.id}`}>
-          <p>{task.tarefa}</p>
-          <button className="button__remove" onClick={() => removeTask(task)}>
-            <FontAwesomeIcon icon={faTrash} />
-          </button>
+          {modoEdicaoId === task.id ? (
+            <>
+              <input
+                className="input__edit"
+                value={textoEditado}
+                onChange={(e) => setTextoEditado(e.target.value)}
+              />
+              <div className="button__task">
+                <button
+                  className="button__save"
+                  onClick={() => {
+                    setTarefaParaEditar({
+                      ...task,
+                      tarefa: textoEditado.trim(),
+                    });
+                    setModalConfirmarEdicao(true);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faSave} />
+                </button>
+
+                <button className="button__cancel" onClick={cancelarEdicao}>
+                  <FontAwesomeIcon icon={faTimes} />
+                </button>
+              </div>
+            </>
+          ) : (
+            <>
+              <p>{task.tarefa}</p>
+
+              <div className="button__task">
+                <button
+                  className="button__edit"
+                  onClick={() => iniciarEdicao(task)}
+                >
+                  <FontAwesomeIcon icon={faPencil} />
+                </button>
+                <button
+                  className="button__remove"
+                  onClick={() => pedirConfirmacao(task)}
+                >
+                  <FontAwesomeIcon icon={faTrash} />
+                </button>
+              </div>
+            </>
+          )}
         </div>
       ))}
+
+      {/* Modal de exclusão */}
+      <ModalConfirmacao
+        aberto={modalAberto}
+        onConfirmar={confirmarRemocao}
+        onCancelar={() => setModalAberto(false)}
+        carregando={carregando}
+        titulo="Confirmar exclusão"
+      >
+        <span>
+          Tem certeza que deseja excluir{" "}
+          <strong>{tarefaSelecionada?.tarefa}</strong> de{" "}
+          <strong>{tarefaSelecionada?.nome}</strong>?
+        </span>
+      </ModalConfirmacao>
+
+      {/* Modal de edição com confirmação */}
+      <ModalConfirmacao
+        aberto={modalConfirmarEdicao}
+        // onConfirmar={async () => {
+        //   if (!tarefaParaEditar || !tarefaParaEditar.tarefa) return;
+
+        //   try {
+        //     const sucesso = await updateTask(tarefaParaEditar);
+        //     if (sucesso) {
+        //       await carregarTarefas();
+        //       notificar("sucesso", "Tarefa atualizada com sucesso!");
+        //     }
+        //   } catch (error) {
+        //     notificar("erro", "Erro ao atualizar tarefa.");
+        //   }
+
+        //   setModoEdicaoId(null);
+        //   setTextoEditado("");
+        //   setTarefaParaEditar(null);
+        //   setModalConfirmarEdicao(false);
+        // }}
+
+        onConfirmar={async () => {
+          if (!tarefaParaEditar || !tarefaParaEditar.tarefa) return;
+
+          setCarregando(true);
+
+          try {
+            const sucesso = await updateTask(tarefaParaEditar);
+            if (sucesso) {
+              await carregarTarefas();
+              notificar("sucesso", "Tarefa atualizada com sucesso!");
+            }
+          } catch (error) {
+            notificar("erro", "Erro ao atualizar tarefa.");
+          }
+
+          setCarregando(false);
+          setModoEdicaoId(null);
+          setTextoEditado("");
+          setTarefaParaEditar(null);
+          setModalConfirmarEdicao(false);
+        }}
+        onCancelar={() => setModalConfirmarEdicao(false)}
+        titulo="Confirmar edição"
+        carregando={carregando}
+      >
+        <span>
+          Tem certeza que deseja salvar a tarefa como{" "}
+          <strong>{tarefaParaEditar?.tarefa}</strong>?
+        </span>
+      </ModalConfirmacao>
     </div>
   );
 };
 
-
---------------------------------------------------------------------------------------------
-Rode esse comando dentro da pasta front-end, pois é lá que você está usando o componente.
-npm install framer-motion
+export default TaskList;
 
 
-aaaaaaeeeeeeeeeeeeefffffffffbbbbbbbbbbbbbbbbbbbb
 --------------------------------------------------------------------------------------------
+21 PASSO - ALTERAR O NODEMON 
+
+****Alterar no packge.json do back-end, retirar o nodemon, não é aceito na produção
+
+ "scripts": {
+    "start": "node ./apiBack/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+
+
 --------------------------------------------------------------------------------------------
+22 PASSO - CÓDIGO PARA MANDAR PARA INDEX.HTML
+Ir para pasta back-end, digite no terminal
+npm i path
+
+Na pasta back-end criar o arquivo test.js
+import path, { dirname } from "path";
+
+const __dirname = path.resolve();
+console.log(__dirname);
+
+E rodar no back-end
+node ./test.js
+
+Vai dá a pasta que está executando: C:\Users\Daniel\Documents\Software\VIVEIRO_Limeira\back-end>
+
+Depois colocar o arquivo test.js dentro de api e rodar: node .\api\test.js
+Vai dá a pasta que está executando: C:\Users\Daniel\Documents\Software\VIVEIRO_Limeira\back-end>
+
+Pode recortar o conteúdo do arquivo test.js e colar no arquivo server.js
+// API significa Application Programing interface
+// POST, GET, PUT, DELETE
+// CRUD - CREATE, READ, UPDATE e DELETE
+// Endpoint
+// Middleware, para resolver o problema do front e back que estão em portas diferentes, import cors from "cors";
+
+// API significa Application Programing interface
+import express from "express";
+import cors from "cors";
+import "dotenv/config";
+// import DbClass from "../crud/dbOnline/DbClass.js"; // 👈 importação correta
+import rotaTarefas from "../crud/rotas/rotaTarefas.js";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+// console.log("__dirname", __dirname);
+
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+app.use(cors());
+
+// CRIAR A ROTA GET QUE IRÁ COMUNICAR O DB COM SERVIDOR
+// app.get("/", async (req, res) => {
+//   const result = await new DbClass().getAll("tarefas");
+//   res.status(200).send(result);
+// });
+
+app.use("/api/tarefas", rotaTarefas);
+
+app.use(express.static(path.join(__dirname, "../../front-end/dist")));
+
+app.get("*any", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../front-end/dist/index.html"));
+});
+
+app.listen(PORT, () => {
+  console.log(`Servidor está escutando na porta ${PORT}`);
+});
+
 --------------------------------------------------------------------------------------------
+23 PASSO - NPM RUN BUIL e START
+Ir para pasta global
+Agora rodar npm run build, precisa estar na pasta mãe
+Agora rodar npm run start, precisa estar na pasta mãe
+
+Rodar git add . , precisa estar na pasta mãe
+Rodar git commit -m "" . , precisa estar na pasta mãe
+Rodar git push . , precisa estar na pasta mãe
+
+
+--------------------------------------------------------------------------------------------
+24 PASSO - DEPLOY DO PROJETO NO RENDER
+Clique em deploy web service
+Em Build Command: npm run build
+Em Start Command: npm run start
+Selecionar free
+Clicar em deploy web service
+
+
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
