@@ -979,7 +979,9 @@ Rodar git push . , precisa estar na pasta mãe
 
 --------------------------------------------------------------------------------------------
 24 PASSO - DEPLOY DO PROJETO NO RENDER
-Clique em deploy web service
+Vá em + Add new
+Clicar em Web Service
+Clicar no projeto, vai aparecer as opções
 Em Build Command: npm run build
 Em Start Command: npm run start
 Selecionar free
@@ -987,6 +989,26 @@ Clicar em deploy web service
 
 
 --------------------------------------------------------------------------------------------
+25 PASSO - DEPLOY DO BANDO DE DADOS NO RENDER
+Cadastrar o banco de dados no Render
+Vá em dashboard
+Em + Add New, clique e postgres
+Coloque o nome do banco de dados
+Clicar em Free
+Deixar os outros campos como estão
+Clicar em create database
+Vá em dashboard
+Clicar no banco e dados
+Clicar em connect
+Copiar o caminho
+postgresql://viveirolimeira_user:HH73wLSYoxZAbyROuUhSF85Cy80ZdMQ8@dpg-d10r7qq4d50c73b3o320-a/viveirolimeira
+Vá em dashboard
+Clique no projeto
+Crie uma variável de ambiente
+Key: DATABASE_URL                        Valor: postgresql://viveirolimeira_x8xq_user:TJxkazEOmmVCI8hyvM6Tv6JqhmbxGr9Q@dpg-d17i23p5pdvs738dqvqg-a/viveirolimeira_x8xq
+Clique em salvar
+
+
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------

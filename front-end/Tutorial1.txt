@@ -13,24 +13,7 @@
 
 
 
-16 PASSO - DEPLOY DO BANDO DE DADOS NO RENDER
-Cadastrar o banco de dados no Render
-Vá em dashboard
-Em new, clique e postgres
-Coloque o nome do banco de dados
-Clicar em Free
-Deixar os outros campos como estão
-Clicar em create database
-Vá em dashboard
-Clicar no banco e dados
-Clicar em connect
-Copiar o caminho
-postgresql://viveirolimeira_user:HH73wLSYoxZAbyROuUhSF85Cy80ZdMQ8@dpg-d10r7qq4d50c73b3o320-a/viveirolimeira
-Vá em dashboard
-Clique no projeto
-Crie uma variável de ambiente
-Key: DATABASE_URL                        Valor: postgresql://viveirolimeira_x8xq_user:TJxkazEOmmVCI8hyvM6Tv6JqhmbxGr9Q@dpg-d17i23p5pdvs738dqvqg-a/viveirolimeira_x8xq
-Clique em salvar
+
 
 17 PASSO - ALTERAR O CAMINHO DE ACESSO 
 Copiar o link de deploy do RENDER
@@ -105,65 +88,4 @@ const pool = new Pool({
 
 export default pool;
 
-
-
-
-No deploy,
-Colocar
-Build Command npm run build
-Start Command npm run start
-Environment Variables não colocar nada
-
-
-
-
-colocar no vite
-
-
-Criar o arquivo vite.config.js no fron-end, com o código abaixo:
-import { defineConfig } from "vite";
-
-export default defineConfig({
-  build: {
-    target: "esnext", // para onde os arquivos serão exportados
-  },
-});
-Vai criar o arquivo a pasta dist com arquivo index.html e a pasta assets e arquivo js, css e png
-Tudo que vamos quere vai está na pasta dist e não src
-
-Na pasta global
-Digite no terminal
-npm init -y
-
-Alterar o script do package.json global:
-
-"name": "deploy",
-Passar o name para deploy, isso é extremamente importante!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
- "scripts": {
-    "build": "npm install --prefix back-end && npm install --prefix front-end && npm run build --prefix front-end",
-    "start": "npm run start --prefix back-end"
-  },
-
-Essas alterações é para instalar o node_modules no front e back e rodar o vite quando rodar o projeto
-
-Alterar o script do package.json do back-end:
-  "scripts": {
-    "start": "node ./apiBack/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-
-Alterar o script do package.json do front-end:
-No package.json do front-end dele está assim:
- "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
-
-
-Digite no terminal:
-npm run build
-npm run start
 
