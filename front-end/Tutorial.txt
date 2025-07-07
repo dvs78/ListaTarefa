@@ -987,6 +987,10 @@ Em Start Command: npm run start
 Selecionar free
 Clicar em deploy web service
 
+Depoi no VS Code alterar BASE_URL
+// const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const BASE_URL = "https://listatarefa-4pc8.onrender.com/api";
+
 
 --------------------------------------------------------------------------------------------
 25 PASSO - DEPLOY DO BANDO DE DADOS NO RENDER

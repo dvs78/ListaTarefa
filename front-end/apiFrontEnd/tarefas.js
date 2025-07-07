@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
-const BASE_URL = "https://listatarefa-4pc8.onrender.com/api";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+// const BASE_URL = "https://listatarefa-4pc8.onrender.com/api";
 
 // Buscar todas as tarefas
 export async function getAllTask() {
@@ -39,10 +39,30 @@ export async function deleteByIdTask(tarefa) {
 }
 
 // Inserir nova tarefa
-export async function insertTask(novaTarefa) {
+// export async function insertTask(novaTarefa) {
+//   try {
+//     const response = await axios.post(`${BASE_URL}/tarefas`, novaTarefa);
+//     return response.data; // retorna a tarefa criada com ID, etc.
+//   } catch (error) {
+//     const msg =
+//       error.response?.data?.erro || error.message || "Erro desconhecido";
+//     console.error("Erro ao inserir tarefa:", msg);
+//     throw new Error(msg);
+//   }
+// }
+export async function insertTask(tarefaTexto) {
   try {
+    const usuario = JSON.parse(localStorage.getItem("usuarioLogado"));
+
+    const novaTarefa = {
+      tarefa: tarefaTexto.tarefa,
+      nome: usuario?.nome,
+      email: usuario?.email,
+      usuarioId: usuario?.usuarioId,
+    };
+
     const response = await axios.post(`${BASE_URL}/tarefas`, novaTarefa);
-    return response.data; // retorna a tarefa criada com ID, etc.
+    return response.data;
   } catch (error) {
     const msg =
       error.response?.data?.erro || error.message || "Erro desconhecido";
