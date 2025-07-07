@@ -11,7 +11,7 @@ import {
 
 import ModalConfirmacao from "../../components/Confirmacao";
 
-const TaskList = async ({ tasklist, setTasklist, carregarTarefas }) => {
+const TaskList = ({ tasklist, setTasklist, carregarTarefas }) => {
   const [modalAberto, setModalAberto] = useState(false);
   const [tarefaSelecionada, setTarefaSelecionada] = useState(null);
   const [carregando, setCarregando] = useState(false);

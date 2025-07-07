@@ -7,7 +7,7 @@ const Login = ({ setUsuarioLogado }) => {
   const [senha, setSenha] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     const encontrado = usuario.find((u) => u.senha === senha);
 
     if (encontrado) {
@@ -16,7 +16,7 @@ const Login = ({ setUsuarioLogado }) => {
         nome: encontrado.nome,
         email: encontrado.email,
       };
-      setUsuarioLogado(user);
+      await setUsuarioLogado(user);
       localStorage.setItem("usuarioLogado", JSON.stringify(user));
 
       navigate("/home");
