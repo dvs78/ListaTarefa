@@ -1,0 +1,270 @@
+
+
+13 ALTERAR ENDPOINT
+É necessário para não confundir com aquivos.js que terão o mesmo nome do endpoint
+Ex:
+
+const BASE_URL = "http://localhost:3000/api/carrinho";
+
+app.use("/api/carrinho", rotasCarrinho);
+app.use("/api/clientes", rotasClientes);
+app.use("/api/mudas", rotasMudas);
+app.use("/api/pedidos", rotasPedidos);
+app.use("/api/entregas", rotasEntregas);
+
+
+app.use(express.static(path.join(__dirname, "../../front-end/dist")));
+
+app.get("*any", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../front-end/dist/index.html"));
+});
+
+****Alterar no packge.json do back-end, retirar o nodemon, não é aceito na produção
+
+ "scripts": {
+    "start": "node ./apiBack/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+
+14 PASSO - CÓDIGO PARA MANDAR PAR INDEX.HTML
+Ir para pasta back-end, digite no terminal
+npm i path
+
+Na pasta back-end criar o arquivo test.js
+import path, { dirname } from "path";
+
+const __dirname = path.resolve();
+console.log(__dirname);
+
+E rodar no back-end
+node ./test.js
+
+Vai dá a pasta que está executando: C:\Users\Daniel\Documents\Software\VIVEIRO_Limeira\back-end>
+
+Depois colocar o arquivo test.js dentro de api e rodar: node .\api\test.js
+Vai dá a pasta que está executando: C:\Users\Daniel\Documents\Software\VIVEIRO_Limeira\back-end>
+
+Pode recortar o conteúdo do arquivo test.js e colar no arquivo server.js
+// API significa Application Programing interface
+// POST, GET, PUT, DELETE
+// CRUD - CREATE, READ, UPDATE e DELETE
+// Endpoint
+// Middleware, para resolver o problema do front e back que estão em portas diferentes, import cors from "cors";
+
+import express from "express";
+import cors from "cors";
+import rotasClientes from "../crud/rotas/rotasClientes.js";
+import path, { dirname } from "path";
+
+const __dirname = path.resolve();
+
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+app.use(cors());
+
+// app.get("/", async (request, response) => {
+//   response.send("Por enquanto só estou com construindo endpoint '/clientes'");
+// });
+
+// app.get("/clientes", async (request, response) => {
+//   response.send("Quero entregar meu json no endpoint '/clientes'");
+// });
+
+// app.get("/clientes", async (request, response) => {
+//   response.send(clientesArray);
+// });
+
+// const clientes = (await pool.query("SELECT * FROM clientes")).rows;
+
+// app.get("/clientes", async (request, response) => {
+//   response.send(clientes);
+// });
+app.use("/api/clientes", rotasClientes);
+
+app.use(express.static(path.join(__dirname, "../../front-end/dist")));
+
+app.get("*any", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../front-end/dist/index.html"));
+});
+
+app.listen(PORT, () => {
+  console.log(`Servidor está escutando na porta ${PORT}`);
+});
+
+
+Ir para pasta global
+Agora rodar npm run build, precisa estar na pasta mãe
+Agora rodar npm run start, precisa estar na pasta mãe
+
+Rodar git add . , precisa estar na pasta mãe
+Rodar git commit -m "" . , precisa estar na pasta mãe
+Rodar git push . , precisa estar na pasta mãe
+
+
+15 PASSO - DEPLOY DO PROJETO NO RENDER
+Clique em deploy web service
+Em Build Command: npm run build
+Em Start Command: npm run start
+Selecionar free
+Clicar em deploy web service
+
+
+
+
+
+16 PASSO - DEPLOY DO BANDO DE DADOS NO RENDER
+Cadastrar o banco de dados no Render
+Vá em dashboard
+Em new, clique e postgres
+Coloque o nome do banco de dados
+Clicar em Free
+Deixar os outros campos como estão
+Clicar em create database
+Vá em dashboard
+Clicar no banco e dados
+Clicar em connect
+Copiar o caminho
+postgresql://viveirolimeira_user:HH73wLSYoxZAbyROuUhSF85Cy80ZdMQ8@dpg-d10r7qq4d50c73b3o320-a/viveirolimeira
+Vá em dashboard
+Clique no projeto
+Crie uma variável de ambiente
+Key: DATABASE_URL                        Valor: postgresql://viveirolimeira_x8xq_user:TJxkazEOmmVCI8hyvM6Tv6JqhmbxGr9Q@dpg-d17i23p5pdvs738dqvqg-a/viveirolimeira_x8xq
+Clique em salvar
+
+17 PASSO - ALTERAR O CAMINHO DE ACESSO 
+Copiar o link de deploy do RENDER
+https://viveirolimeira.onrender.com
+
+
+ Como preencher no DBeaver
+Aqui está exatamente o que colocar:
+De acordo com a senha do banco de dados no render em connect:
+postgresql://viveirolimeira_94ij_user:nZIDkx3o5NVVVs3fWEDpiSAjsBJYpmBz@dpg-d17k8evdiees7387e82g-a/viveirolimeira_94ij
+
+Campo no DBeaver	Valor
+Ir em banco de dados => nova conexão e 2 cliques em postgres
+
+Principal:
+Host	dpg-d17k8evdiees7387e82g-a.oregon-postgres.render.com
+Porta	5432
+Base de dados	viveirolimeira_94ij
+Usuário	viveirolimeira_94ij_user
+Senha	nZIDkx3o5NVVVs3fWEDpiSAjsBJYpmBz
+
+Ir em propriedades do driver:
+Modo SSL (se aparecer)	require
+
+Clicar em testar  conexão
+
+
+17 PASSO - CRIAR O ARQUIVO .env PARA DEIXAR OS DADOS DE CONEXÃO SEGUROS
+Criar as variáveis de ambiente
+São as variáveis que não serão compartilhadas com terceiros
+
+Criar arquivo .env
+Colocar no arquivo .env
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=Limao_10
+DB_DATABASE=ViveiroLimeira
+
+Digitar no terminal npm install dotenv
+npm install dotenv
+Serve para ter acesso as variáveis de ambiente
+
+Colocar na server.js = import "dotenv/config"
+Versões mais novas não precisam do dotenv, não deu certo. Precisei instalar
+
+Alterar o arquivo server.js
+const pool = new pg.Pool({
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+});
+
+
+
+
+No arquivo connect do backend, cole o código abaixo:
+import pkg from 'pg';
+const { Pool } = pkg;
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
+
+export default pool;
+
+
+
+
+No deploy,
+Colocar
+Build Command npm run build
+Start Command npm run start
+Environment Variables não colocar nada
+
+
+
+
+colocar no vite
+
+
+Criar o arquivo vite.config.js no fron-end, com o código abaixo:
+import { defineConfig } from "vite";
+
+export default defineConfig({
+  build: {
+    target: "esnext", // para onde os arquivos serão exportados
+  },
+});
+Vai criar o arquivo a pasta dist com arquivo index.html e a pasta assets e arquivo js, css e png
+Tudo que vamos quere vai está na pasta dist e não src
+
+Na pasta global
+Digite no terminal
+npm init -y
+
+Alterar o script do package.json global:
+
+"name": "deploy",
+Passar o name para deploy, isso é extremamente importante!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+ "scripts": {
+    "build": "npm install --prefix back-end && npm install --prefix front-end && npm run build --prefix front-end",
+    "start": "npm run start --prefix back-end"
+  },
+
+Essas alterações é para instalar o node_modules no front e back e rodar o vite quando rodar o projeto
+
+Alterar o script do package.json do back-end:
+  "scripts": {
+    "start": "node ./apiBack/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+
+Alterar o script do package.json do front-end:
+No package.json do front-end dele está assim:
+ "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+
+
+Digite no terminal:
+npm run build
+npm run start
+

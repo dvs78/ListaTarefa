@@ -1,0 +1,704 @@
+--------------------------------------------------------------------------------------------
+1 PASSO - INSTALAR O VITE
+Digitar no terminal: npm create vite@latest .
+O espaço e ponto e para inidicar a criação do vite justamente na pasta em questão
+React
+JavaScript
+
+Digitar no terminal:
+npm i
+É a mesma coisa de npm install, é abreviação, mas e para inidicar a criação dos pacotes (bibliotecas ou módulos) do node na pasta em questão, vai criar o arquivo node_modules
+Toda vez que digitar npm run dev, vai rodar o vite, é só olhar na pasta package.json em scripts
+Quando digitar npm run build, vai rodar o vite build, é só olhar na pasta package.json em scripts
+
+Digitar no terminal:
+npm run dev
+
+Excluir a pasta public
+Na pasta .gitignore deixar somente = node_modules
+Na pasta assets
+Excluir App.css
+No arquivo App.jsx deixar assim:
+
+function App() {
+  return <></>;
+}
+export default App;
+
+No arquivo index.css, ecluir todo conteúdo
+No arquivo main.jsx, não precisa alterar
+Excluir o arquivo README.md
+
+
+--------------------------------------------------------------------------------------------
+2 PASSO - INSTALAR CÓDIGO DO FONT AWESOME React
+Ir no site, clicar em docs => view the docs => Integrations => React => Set Up with React
+
+Rolar para baixo até Add SVG Core e pegar o código e rodar no terminal
+npm i --save @fortawesome/fontawesome-svg-core
+
+Rolar mais para baixo até Add Icons Packages e pegar o código em Free SVG Icon Package e rodar no terminal tudo de uma vez só
+npm i --save @fortawesome/free-solid-svg-icons
+npm i --save @fortawesome/free-regular-svg-icons
+npm i --save @fortawesome/free-brands-svg-icons
+
+Rolar mais para baixo até Add React Component e pegar o código e rodar no terminal
+npm i --save @fortawesome/react-fontawesome@latest
+
+Colocar no arquivo onde for utilizar o ícone
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
+E para instalar o ícnone precisa importar - React / Individual import
+<FontAwesomeIcon icon={faCirclePlay} />
+
+
+--------------------------------------------------------------------------------------------
+3 PASSO - SUBIR PROJETO PARA O GITHUB
+Antes, no arquivo .gitignore, deve ficar assim:
+node_modules
+.env
+
+Abrir o github:
+Ir em new
+Colocar o nome do repositório, ex: ViveiroLimeiraGit
+Deixar em público
+Clicar em criar repositório
+
+Agora é ir para o VS Code 
+Abrir na pasta global
+Digite no terminal:
+git init, vai deixar os arquivos U
+git add .
+git commit -m "Fazendo o 1 commit"
+Em or push an existing repository from the comnad line
+Copiar todos os códigos e rodar no terminal:
+Ex:
+git remote add origin https://github.com/dvs78/ViveiroLimeiraReact.git
+git branch -M main
+git push -u origin main
+
+
+
+1. Avisos de "LF will be replaced by CRLF"
+Isso é apenas um aviso de que as quebras de linha no seu projeto (LF — estilo Unix) estão sendo convertidas para o estilo do Windows (CRLF). Você pode:
+
+👉 Ignorar os avisos
+Eles não impedem o funcionamento nem o commit dos arquivos.
+
+👉 Ou corrigir globalmente no Git:
+Digite no terminal:
+git config --global core.autocrlf true
+Esse comando faz o Git converter LF para CRLF no checkout e reverter para LF no commit.
+
+ Solução estrutural (recomendada): Corrigir o loop de dependências
+Sua estrutura tem isso:
+
+arduino
+Copiar
+Editar
+back-end/node_modules/lista_tarefa/back-end/node_modules/lista_tarefa/back-end/...
+Isso parece indicar um erro no package.json ou loop de importações onde um módulo está incluindo ele mesmo recursivamente.
+
+Recomendo:
+
+Apagar a pasta node_modules completamente:
+Digite no terminal:
+Remove-Item -Recurse -Force .\node_modules
+Ou, se estiver na raiz do projeto:
+Digite no terminal:
+Remove-Item -Recurse -Force node_modules
+
+Apagar também o package-lock.json:
+Digite no terminal:
+Remove-Item -Force package-lock.json
+
+Depois, reinstalar tudo corretamente:
+Digite no terminal:
+npm install
+
+Criar uma página .gitignore no back-end também
+
+--------------------------------------------------------------------------------------------
+5 PASSO - INSTALAR PACOTE PARA RE-RENDERIZAR PÁGINAS
+Abrir na pasta global
+Digitar no terminal:
+npm i react-router-dom
+
+Importar dentro do arquivo App.jsx
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+O que é BrowserRouter: vai gerenciar as rotas. Browser = navegador, Router = roteador
+Agora as páginas são componenetes que serão re-renderizados num mesmo documento, 
+ou se é certo dizer, na mesma página
+
+ESTAVA ASSIM:
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Header from "./components/Header";
+import Home from "./Pages/Home/Home";
+
+function App() {
+  return (
+    <div className="app__components">
+      <Header />
+      <Home />
+    </div>
+  );
+}
+
+export default App;
+
+FICOU ASSIM:
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Header from "./components/Header";
+import Home from "./Pages/Home/Home";
+import Login from "./Pages/Login/login";
+
+function App() {
+  return (
+    <div className="app__components">
+      <Header />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </div>
+  );
+}
+
+export default App;
+
+
+IR NO main.jsx e alterar
+ESTAVA ASSIM:
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+
+FICOU ASSIM:
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import "./index.css";
+import App from "./App.jsx";
+import { BrowserRouter } from "react-router-dom";
+
+createRoot(document.getElementById("root")).render(
+  <StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </StrictMode>
+);
+
+
+--------------------------------------------------------------------------------------------
+6 PASSO - CONSTRUIR A API - APPLICATION PROGRAMING INTERFACE (Interface de programação de aplicações)
+Sistema utilizado para comunicação de 2 entidades, ou seja, 2 computadores
+Criar uma pasta fron-end e colar todos os arquivos criados até agora
+Criar a pasta back-end para montar a API
+Ir para back-end no terminal
+Criar um package.json, digitar o código abaixo. O -y é só para trazer todas as configurações padrão desse projeto aquivos
+npm init -y
+
+Colocar no package.json, depois de description "type": "module",
+
+Instalar express e pgadmin
+npm install express pg
+
+express: framework para criar a API HTTP.
+pg: cliente PostgreSQL para Node.js.
+
+Em back-end criar a pasta apiBackEnd e dentro dela o arquivo server.js
+
+!!!!!!!!!!!!!!Tentar colocar nodemon ou node --watch
+
+
+--------------------------------------------------------------------------------------------
+7 PASSO - CONTINUAÇÃO DA API
+NO arquivo server.js, deixar assim:
+
+// API significa Application Programing interface
+// POST, GET, PUT, DELETE
+// CRUD - CREATE, READ, UPDATE e DELETE
+// Endpoint
+
+import express from "express";
+
+const app = express();
+
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor está escutando na porta ${PORT}`);
+});
+
+mata o servidor e executa o arquivo server.js
+node .\api\server.js
+
+Mas sempre que alterar o código, tem que matar o servidor e reiniciar novamente
+Para não ter que fazer isso tem que colocar watch
+node --watch .\api-back-end\server.js, não fiz isso, não sei onde fazer
+
+Alguns treinos na web
+// app.get("/", async (req, res) => {
+//   res.send("Por enquanto só estou com construindo endpoint '/clientes'");
+// });
+
+abrir o google e rodar localhost:3000
+
+
+--------------------------------------------------------------------------------------------
+8 PASSO - CRIAR A PASTA API NO FRONT-ENDPOINT
+Criar a pasta apiFrontEnd no front-end e dentro dela apiFrontEnd.js
+Instalar o axios no front-end
+Digitar no terminal do front-end
+npm i axios
+
+
+9 PASSO - CORS
+Middleware, para resolver o problema do front e back que estão em portas diferentes,
+cors: middleware que permite requisições entre front-end e back-end.
+Ir para pasta back-end
+Digitar no terminal
+Rodar no arquivo server.js, não fiz isso
+npm i cors
+
+Colar no arquivo server.js:
+import cors from "cors";
+
+app.use(cors());
+app.use(express.json());
+
+VAI FICAR ASSIM:
+// API significa Application Programing interface
+// POST, GET, PUT, DELETE
+// CRUD - CREATE, READ, UPDATE e DELETE
+// Endpoint
+
+import express from "express";
+import cors from "cors";
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+app.get("/", async (req, res) => {
+  res.send("Por enquanto só estou com construindo endpoint '/clientes'");
+});
+
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor está escutando na porta ${PORT}`);
+});
+
+
+--------------------------------------------------------------------------------------------
+10 PASSO - CRIAR O BANCO DE DADOS NO pgadmin
+
+-- CRIAÇÃO DA TABELA TAREFAS
+CREATE TABLE IF NOT EXISTS public.tarefas(
+  id SERIAL PRIMARY KEY,  -- id UUID DEFAULT gen_random_uuid() PRIMARY KEY, 
+  email TEXT NOT NULL,
+  nome TEXT NOT NULL,
+  tarefa TEXT NOT NULL
+);
+
+
+--------------------------------------------------------------------------------------------
+11 PASSO - CONECTAR O nodejs COM O BANCO pg admin
+Criar o código abaixo para conectar o nodejs com banco de dados
+Digitar no server.js:
+
+import pg from "pg";
+
+const pool = new pg.Pool({
+  host: "localhost",
+  port: 5432,
+  user: "postgres",
+  password: "Limao_10",
+  database: "ViveiroLimeira",
+});
+
+console.log((await pool.query("SELECT * FROM clientes")).rows);
+
+MEU ARQUIVO ESTÁ ASSIM:
+// API significa Application Programing interface
+// POST, GET, PUT, DELETE
+// CRUD - CREATE, READ, UPDATE e DELETE
+// Endpoint
+
+import express from "express";
+import cors from "cors";
+import pg from "pg";
+
+const pool = new pg.Pool({
+  host: "localhost",
+  port: 5432,
+  user: "postgres",
+  password: "Limao_10",
+  database: "Lembretes",
+});
+
+console.log((await pool.query("SELECT * FROM tarefas")).rows);
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+app.get("/", async (req, res) => {
+  res.send("Por enquanto só estou com construindo endpoint '/clientes'");
+});
+
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor está escutando na porta ${PORT}`);
+});
+
+Rodar o node ./server.js e conferir se deu certo
+
+
+--------------------------------------------------------------------------------------------
+12 PASSO - CRIAR O ARQUIVO .env PARA DEIXAR OS DADOS DE CONEXÃO SEGUROS
+São as variáveis que não serão compartilhadas com terceiros
+Criar arquivo .env no back-end
+
+Colocar no arquivo .env:
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=Limao_10
+DB_DATABASE=Lembretes
+
+Digitar no terminal, na pasta back-end:
+npm install dotenv
+npm install dotenv = serve para ter acesso as variáveis de ambiente
+
+Colocar na server.js = import "dotenv/config"
+Versões mais novas não precisam do dotenv, não deu certo. Precisei instalar
+
+Alterar o arquivo server.js
+const pool = new pg.Pool({
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+});
+
+Rodar o node ./server.js e conferir se deu certo
+
+
+--------------------------------------------------------------------------------------------
+13 PASSO - CRIAR AS ESTRUTURAS DO CRUD
+Criar a pasta crud em back-end
+POST, GET, PUT, DELETE
+CRUD - CREATE, READ, UPDATE e DELETE
+Dentro da pasta crud, criar a pasta dbOnLine, colocar as estruturas de acesso ao banco de dados
+Essa pasta vai guardar os códigos que fazem comunicação com banco de dados e terá tudo que for comunicação com banco de dados
+
+Criar o arquivo de acesso ao banco de dados
+Criar o arquivo db.js na pasta dbOnLine
+
+Recortar do server.js e colar no db.js
+
+import pg from "pg";
+
+const pool = new pg.Pool({
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+});
+
+export default pool
+
+No arquivo server.js colar
+
+
+--------------------------------------------------------------------------------------------
+14 PASSO - CRIAR A CLASSE GERAL DAS ROTAS
+Dentro da pasta dbOnLine, criar um arquivo DbClass.js
+As iniciais em maiúsculo, porque iremos criar uma classe nesse arquivo
+Esse arquivo terá as ações comuns para o banco de dados
+
+Colocar no arquivo DbClass.js o código abaixo:
+import pool from "./db.js";
+
+class DbClass {
+  async getAll(table, columns = ["*"]) {
+    const colStr = columns.join(", ");
+    try {
+      const results = (await pool.query(`SELECT ${colStr} FROM ${table}`)).rows;
+      return results;
+    } catch (error) {
+      console.error(
+        `Erro ao buscar dados da tabela '${table}':`,
+        error.message
+      );
+      return [];
+    }
+  }
+}
+
+export default DbClass;
+
+
+export default DbClass;
+
+O ARQUIVO server.js ESTÁ ASSIM:
+// API significa Application Programing interface
+import express from "express";
+import cors from "cors";
+import "dotenv/config";
+import DbClass from "../crud/dbOnline/DbClass.js"; // 👈 importação correta
+
+const app = express();
+
+app.use(cors());
+app.use(express.json());
+
+// CRIAR A ROTA GET QUE IRÁ COMUNICAR O DB COM SERVIDOR
+app.get("/", async (req, res) => {
+  const result = await new DbClass().getAll("tarefas");
+  res.status(200).send(result);
+});
+
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor está escutando na porta ${PORT}`);
+});
+
+
+--------------------------------------------------------------------------------------------
+15 PASSO - CRIAR O ARQUIVO DE ROTAS
+Criar a pasta rotas e arquivo rotaTarefas.js
+Vamos criar a rota das tarefas:
+
+import { Router } from "express";
+import DbClassTarefas from "../dbOnline/DbClassTarefas.js";
+
+const rotas = Router();
+
+rotas.get("/", async (req, res) => {
+  try {
+    const result = await new DbClassTarefas().getAll();
+    res.status(200).send(result);
+  } catch (error) {
+    console.error("Erro na rota GET /:", error.message);
+    res.status(500).json({ erro: "Erro ao buscar tarefas" });
+  }
+});
+
+export default rotas;
+
+
+O arquivo server.js, FICA ASSIM:
+// API significa Application Programing interface
+import express from "express";
+import cors from "cors";
+import "dotenv/config";
+// import DbClass from "../crud/dbOnline/DbClass.js"; // 👈 importação correta
+import rotaTarefas from "../crud/rotas/rotaTarefas.js";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+console.log("__dirname", __dirname);
+
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+app.use(cors());
+
+// CRIAR A ROTA GET QUE IRÁ COMUNICAR O DB COM SERVIDOR
+// app.get("/", async (req, res) => {
+//   const result = await new DbClass().getAll("tarefas");
+//   res.status(200).send(result);
+// });
+
+app.use("/api/tarefas", rotaTarefas);
+
+app.use(express.static(path.join(__dirname, "../../front-end/dist")));
+
+app.get("*any", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../front-end/dist/index.html"));
+});
+
+app.listen(PORT, () => {
+  console.log(`Servidor está escutando na porta ${PORT}`);
+});
+
+
+--------------------------------------------------------------------------------------------
+16 PASSO - COLOCAR AS MENSAGENS DE ERRO
+Digite na pasta front-end:
+npm install toastify-js
+reiniciar o front-end com npm run dev
+
+
+-------------------------------------------------------------------------------------------
+17 PACKAGE.JSON global - TALVEZ AQUI PODE DAR ERRO
+
+Na pasta global
+Digite no terminal
+npm init -y
+
+Alterar o script do package.json global:
+
+"name": "deploy", não fiz isso
+Passar o name para deploy, isso é extremamente importante!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+ "scripts": {
+    "build": "npm install --prefix back-end && npm install --prefix front-end && npm run build --prefix front-end",
+    "start": "npm run start --prefix back-end"
+  },
+
+Essas alterações é para instalar o node_modules no front e back e rodar o vite quando rodar o projeto
+
+Alterar o script do package.json do back-end:
+  "scripts": {
+    "start": "node ./apiBackEnd/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+
+Alterar o script do package.json do front-end:, não fiz isso
+No package.json do front-end dele está assim:
+ "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+
+
+Digite no terminal:
+npm run build
+npm run start
+
+
+--------------------------------------------------------------------------------------------
+18 PASSO - CRIAR A CLASSE ESPECÍFICA DAS ROTAS
+
+ARQIOVO DbClassTarefas.js
+import DbClass from "./DbClass.js";
+
+class DbClassTarefas extends DbClass {
+  // BUSCAR TUDO
+  async getAll() {
+    try {
+      const results = await super.getAll("tarefas", [
+        "id",
+        "email",
+        "nome",
+        "tarefa",
+      ]);
+      return results;
+    } catch (error) {
+      console.error("Erro ao buscar tarefas:", error.message);
+      return [];
+    }
+  }
+}
+
+export default DbClassTarefas;
+
+
+--------------------------------------------------------------------------------------------
+19 PASSO - CRIAR A ROTA NO FRONT-END
+
+import axios from "axios";
+
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+
+// Buscar todas as tarefas
+export async function getAllTask() {
+  try {
+    const { data } = await axios.get(`${BASE_URL}/tarefas`);
+    return data;
+  } catch (error) {
+    const msg =
+      error.response?.data?.erro || // `erro` é o que sua API devolve
+      error.response?.data?.message ||
+      error.message ||
+      "Erro desconhecido";
+    console.error("Erro ao buscar tarefas:", msg);
+    return [];
+  }
+}
+
+
+--------------------------------------------------------------------------------------------
+20 PASSO - NOTIFICÇÕES PARA Ok ou CANCELAR
+Instale o SweetAlert2 no projeto frontend:
+npm install sweetalert2
+
+Atualize sua função removeTask em TaskList.jsx
+import Swal from "sweetalert2";
+import { deleteByIdTask } from "../../../apiFrontEnd/tarefas";
+import { notificar } from "../../components/Toast";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+
+const TaskList = ({ tasklist, setTasklist, carregarTarefas }) => {
+  const removeTask = async (task) => {
+    const result = await Swal.fire({
+      title: "Tem certeza?",
+      text: `Deseja excluir a tarefa: "${task.tarefa}"?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Sim, excluir",
+      cancelButtonText: "Cancelar",
+    });
+
+    if (!result.isConfirmed) return;
+
+    const success = await deleteByIdTask(task);
+    if (success) {
+      await carregarTarefas();
+      notificar("erro", "Tarefa excluída com sucesso!");
+    } else {
+      notificar("erro", "Erro ao excluir tarefa.");
+    }
+  };
+
+  return (
+    <div className="task__list">
+      {tasklist.map((task, i) => (
+        <div className="task__list-item" key={`task-${task.id}`}>
+          <p>{task.tarefa}</p>
+          <button className="button__remove" onClick={() => removeTask(task)}>
+            <FontAwesomeIcon icon={faTrash} />
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+
+--------------------------------------------------------------------------------------------
+Rode esse comando dentro da pasta front-end, pois é lá que você está usando o componente.
+npm install framer-motion
+
+
+aaaaaaeeeeeeeeeeeeefffffffffbbbbbbbbbbbbbbbbbbbb
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------

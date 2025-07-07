@@ -1,0 +1,16 @@
+# Node
+node_modules/
+dist/
+.env
+
+# Vite / React
+.vite/
+*.log
+
+# IDEs
+.vscode/
+.idea/
+
+# SOs
+.DS_Store
+Thumbs.db
