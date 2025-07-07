@@ -39,6 +39,7 @@ import Home from "./Pages/Home/Home";
 import Login from "./Pages/Login/Login";
 import Toast from "./components/Toast";
 import { useState } from "react";
+import RotaProtegida from "./components/RotaProtegida";
 
 function App() {
   const [usuarioLogado, setUsuarioLogado] = useState(() => {
@@ -53,15 +54,22 @@ function App() {
 
   return (
     <div className="app__components">
-      {usuarioLogado && (
+      {/* {usuarioLogado && (
         <Header usuarioLogado={usuarioLogado} onLogout={handleLogout} />
-      )}
+      )} */}
       <Routes>
         <Route
           path="/"
           element={<Login setUsuarioLogado={setUsuarioLogado} />}
         />
-        <Route path="/home" element={<Home usuarioLogado={usuarioLogado} />} />
+        <Route
+          path="/home"
+          element={
+            <RotaProtegida>
+              <Home usuarioLogado={usuarioLogado} onLogout={handleLogout} />
+            </RotaProtegida>
+          }
+        />
       </Routes>
       <Toast />
     </div>
